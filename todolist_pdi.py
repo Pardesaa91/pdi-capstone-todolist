@@ -26,17 +26,19 @@ class ToDoList:
         self.tasks.append(Task(description))
         print("This task has been added to your list.")
 
-    def view_tasks(self)
+    def view_tasks(self):
         if self.tasks:
             print() ##Print a list of available tasks
         else:
             print("There are currently no active tasks.")
     
-    def complete_task(self)
-        
-    def delete_task(self)
+    def complete_task(self):
+        pass
+
+    def delete_task(self):
+        pass
     
-    def view_menu(self)
+    def view_menu(self):
         choice = input("Please choose from the following:")
         print("1. Add Task")
         print("2. View Tasks")
@@ -44,17 +46,21 @@ class ToDoList:
         print("4. Delete Task")
         print("5. Quit")
 
-    if choice == "1":
-        #Add a task
-    elif choice == "2":
-        #View Tasks
-    elif choice == "3":
-        #Complete a selected task
-    elif choice == "4":
-        #Delete a selected task
-    elif choice == "5":
-        break
-    else:
-        print("Invalid choice. Please try again.")
+        if choice == "1":
+            #Add a task
+            pass
+        elif choice == "2":
+            #View Tasks
+            pass
+        elif choice == "3":
+            #Complete a selected task
+            pass
+        elif choice == "4":
+            #Delete a selected task
+            pass
+        elif choice == "5":
+            pass
+        else:
+            print("Invalid choice. Please try again.")
     
         
