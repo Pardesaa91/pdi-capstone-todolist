@@ -1,7 +1,7 @@
 
 ##Define the Class, "Task".
 class Task:
-    def __init__ (self, description, status):
+    def __init__ (self, description):
         self.description = description
         self.completed = False
 
@@ -9,7 +9,7 @@ class Task:
         self.completed = True
     
     def __str__(self):
-        if self.completed():
+        if self.completed:
             status = "completed"
             return f"You have {status} the task: {self.description}"
         else:
@@ -58,31 +58,34 @@ class ToDoList:
         except ValueError:
             print("Please enter a valid number.")
     
-def view_menu():
-    while True:
-        print("Please choose an option from below:")
-        print("1. Add Task")
-        print("2. View Tasks")
-        print("3. Complete Task")
-        print("4. Delete Task")
-        print("5. Quit")
-        choice = input()
+    def run(self):
+        while True:
+            print("Please choose an option from below:")
+            print("1. Add Task")
+            print("2. View Tasks")
+            print("3. Complete Task")
+            print("4. Delete Task")
+            print("5. Quit")
+            choice = input()
+            print()
 
-        if choice == "1":
-            #Add a task
-            ToDoList.add_task
-        elif choice == "2":
-            #View Tasks
-            ToDoList.view_tasks
-        elif choice == "3":
-            #Complete a selected task
-            ToDoList.complete_task
-        elif choice == "4":
-            #Delete a selected task
-            ToDoList.delete_task
-        elif choice == "5":
-            break
-        else:
-            print("Invalid choice. Please try again.")
-view_menu()
+            if choice == "1":
+                #Add a task
+                self.add_task()
+            elif choice == "2":
+                #View Tasks
+                self.view_tasks()
+            elif choice == "3":
+                #Complete a selected task
+                self.complete_task()
+            elif choice == "4":
+                #Delete a selected task
+                self.delete_task()
+            elif choice == "5":
+                break
+            else:
+                print("Invalid choice. Please try again.")
+if __name__ == "__main__":
+    todo_list = ToDoList()
+    todo_list.run()
         
