@@ -28,39 +28,61 @@ class ToDoList:
 
     def view_tasks(self):
         if self.tasks:
-            print() ##Print a list of available tasks
+            for idx, task in enumerate(self.tasks, start=1):
+                print(f"{idx}. {task}")
         else:
             print("There are currently no active tasks.")
+        print()
     
     def complete_task(self):
-        pass
+        self.view_tasks()
+        try:
+            index = int(input("Enter task number to complete: ")) - 1
+            if 0 <= index < len(self.tasks):
+                self.tasks[index].mark_complete()
+                print("You have successfully completed this task!")
+            else:
+                print("Invalid task number.")
+        except ValueError:
+            print("Please enter a valid number.")
 
     def delete_task(self):
-        pass
+        self.view_tasks()
+        try:
+            index = int(input("Enter task number to delete: ")) - 1
+            if 0 <= index <len(self.tasks):
+                removed_task = self.tasks.pop(index)
+                print(f"Deleted task: {removed_task.description}")
+            else:
+                print("Invalid task number.")
+        except ValueError:
+            print("Please enter a valid number.")
     
-    def view_menu(self):
-        choice = input("Please choose from the following:")
+def view_menu():
+    while True:
+        print("Please choose an option from below:")
         print("1. Add Task")
         print("2. View Tasks")
         print("3. Complete Task")
         print("4. Delete Task")
         print("5. Quit")
+        choice = input()
 
         if choice == "1":
             #Add a task
-            pass
+            ToDoList.add_task
         elif choice == "2":
             #View Tasks
-            pass
+            ToDoList.view_tasks
         elif choice == "3":
             #Complete a selected task
-            pass
+            ToDoList.complete_task
         elif choice == "4":
             #Delete a selected task
-            pass
+            ToDoList.delete_task
         elif choice == "5":
-            pass
+            break
         else:
             print("Invalid choice. Please try again.")
-    
+view_menu()
         
