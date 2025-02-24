@@ -1,10 +1,14 @@
+from sqlmodel import SQLModel, Field
+
 
 ##Define the Class, "Task".
-class Task:
-    def __init__ (self, description):
-        self.description = description
-        self.completed = False
 
+
+
+class Task(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    description: str
+    completed: bool = Field(default=False)
     def mark_complete(self):
         self.completed = True
     
@@ -23,7 +27,7 @@ class ToDoList:
     
     def add_task(self):
         description = input("Please enter task description:")
-        self.tasks.append(Task(description))
+        self.tasks.append(Task(description = description))
         print("This task has been added to your list.\n")
 
     def view_tasks(self):
