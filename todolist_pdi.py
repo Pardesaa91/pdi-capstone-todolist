@@ -49,8 +49,8 @@ class ToDoList:
             if tasks:
                 for idx, task in enumerate(tasks, start=1):
                     print(f"{idx}. {task}")
-                else:
-                    print("There are currently no active tasks.\n")
+            else:
+                print("There are currently no active tasks.\n")
 
     
     def complete_task(self):
