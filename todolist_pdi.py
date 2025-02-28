@@ -1,5 +1,8 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Session, create_engine, select
 
+engine = create_engine("sqlite:///todolist.db")
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
 
 ##Define the Class, "Task".
 
@@ -9,6 +12,7 @@ class Task(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     description: str
     completed: bool = Field(default=False)
+    
     def mark_complete(self):
         self.completed = True
     
@@ -20,49 +24,82 @@ class Task(SQLModel, table=True):
             status = "[ ]"
             return f"{status} {self.description}\n"
 
+
+
 ##Define the actual To Do List
 class ToDoList:
     def __init__(self):
-        self.tasks = []
+        self.engine = engine
     
     def add_task(self):
         description = input("Please enter task description:")
-        self.tasks.append(Task(description = description))
-        print("This task has been added to your list.\n")
+        
+        new_task=Task(description=description)
+        
+        with Session(self.engine) as session:
+            session.add(new_task)
+            session.commit()
+            print("This task has been added to your list.\n")
+
 
     def view_tasks(self):
-        if self.tasks:
-            for idx, task in enumerate(self.tasks, start=1):
-                print(f"{idx}. {task}")
-        else:
-            print("There are currently no active tasks.\n")
-        print()
+        with Session(self.engine) as session:
+            tasks = session.exec(select(Task)).all()
+
+            if tasks:
+                for idx, task in enumerate(tasks, start=1):
+                    print(f"{idx}. {task}")
+                else:
+                    print("There are currently no active tasks.\n")
+
     
     def complete_task(self):
-        self.view_tasks()
-        try:
-            index = int(input("Enter task number to complete: \n")) - 1
-            if 0 <= index < len(self.tasks):
-                self.tasks[index].mark_complete()
-                print("You have successfully completed this task!\n")
-            else:
-                print("Invalid task number.\n")
-        except ValueError:
-            print("Please enter a valid number.\n")
+        with Session(self.engine) as session:
+            tasks = session.exec(select(Task)).all()
+            if not tasks:
+                print("There are no tasks to complete.\n")
+                return
+
+            for idx, task in enumerate(tasks, start=1):
+                print(f"{idx}. {task}")
+
+            try:
+                index = int(input("Enter task number to complete: ")) - 1
+                if 0 <= index < len(tasks):
+                    task_to_update = tasks[index]
+                    task_to_update.mark_complete()
+                    session.add(task_to_update)
+                    session.commit()
+                    print("You have successfully completed this task!\n")
+                else:
+                    print("Invalid task number.\n")
+            except ValueError:
+                print("Please enter a valid number.\n")
 
     def delete_task(self):
-        self.view_tasks()
-        try:
-            index = int(input("Enter task number to delete: \n")) - 1
-            if 0 <= index <len(self.tasks):
-                removed_task = self.tasks.pop(index)
-                print(f"Deleted task: {removed_task.description}\n")
-            else:
-                print("Invalid task number.\n")
-        except ValueError:
-            print("Please enter a valid number.")
+        with Session(self.engine) as session:
+            tasks = session.exec(select(Task)).all()
+            if not tasks:
+                print("There are no tasks to delete.\n")
+                return
+            for idx, task in enumerate(tasks, start=1):
+                print(f"{idx}. {task}")
+
+            try:
+                index = int(input("Enter task number to delete: ")) - 1
+                if 0 <= index < len(tasks):
+                    task_to_delete = tasks[index]
+                    session.delete(task_to_delete)
+                    session.commit()
+                    print(f"Deleted task: {task_to_delete.description}.\n")
+                else:
+                    print("Invalid task number.\n")
+            except ValueError:
+                print("Please enter a valid number.\n")
     
     def run(self):
+        create_db_and_tables()
+
         while True:
             print("Please choose an option from below:\n")
             print("1. Add Task")
@@ -86,6 +123,7 @@ class ToDoList:
                 #Delete a selected task
                 self.delete_task()
             elif choice == "5":
+                print("Goodbye!")
                 break
             else:
                 print("Invalid choice. Please try again.")
