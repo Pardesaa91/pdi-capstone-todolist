@@ -64,21 +64,30 @@ class ToDoList:
                 elif add_another == 'n':
                     return
                 else:
-                    print("Invalid Choice, please try again.\n")
+                    print("Invalid choice, please try again.\n")
         
 
            
 
 
     def view_tasks(self):
-        with Session(self.engine) as session:
-            tasks = session.exec(select(Task).order_by(asc(Task.due_date))).all()
+        while True:
+            with Session(self.engine) as session:
+                tasks = session.exec(select(Task).order_by(asc(Task.due_date))).all()
 
-            if tasks:
-                for idx, task in enumerate(tasks, start=1):
-                    print(f"{idx}. {task}")
+                if tasks:
+                    for idx, task in enumerate(tasks, start=1):
+                        print(f"{idx}. {task}")
+                else:
+                    print("There are currently no active tasks.\n")
+            return_to_menu = input("Would you like to return to the main menu? (y/n)\n").strip().lower()
+            if return_to_menu == 'y':
+                return
+            elif return_to_menu == 'n':
+                break
             else:
-                print("There are currently no active tasks.\n")
+                print("Invalid choice, please try again.\n")
+
 
     
     def complete_task(self):
