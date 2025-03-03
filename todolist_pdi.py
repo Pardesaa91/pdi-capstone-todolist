@@ -1,6 +1,5 @@
 from sqlmodel import SQLModel, Field, Session, create_engine, select
 from datetime import date, datetime
-from typing import Optional
 from sqlalchemy import asc
 
 engine = create_engine("sqlite:///todolist.db")
@@ -15,7 +14,7 @@ class Task(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     description: str
     completed: bool = Field(default=False)
-    due_date: Optional[date] = Field(default=None)
+    due_date: date | None = Field(default=None)
     
     def mark_complete(self):
         self.completed = True
