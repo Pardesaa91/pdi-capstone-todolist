@@ -1,4 +1,7 @@
 from sqlmodel import SQLModel, Field, Session, create_engine, select
+from datetime import date, datetime
+from typing import Optional
+from sqlalchemy import asc
 
 engine = create_engine("sqlite:///todolist.db")
 def create_db_and_tables():
@@ -12,6 +15,7 @@ class Task(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     description: str
     completed: bool = Field(default=False)
+    due_date: Optional[date] = Field(default=None)
     
     def mark_complete(self):
         self.completed = True
@@ -19,10 +23,12 @@ class Task(SQLModel, table=True):
     def __str__(self):
         if self.completed:
             status = "[✓]"
-            return f"{status} {self.description}\n"
+            due = f"(Due: {self.due_date})"
+            return f"{status} {self.description}{due}\n"
         else:
             status = "[ ]"
-            return f"{status} {self.description}\n"
+            due = f"(Due: {self.due_date})" if self.due_date else ""
+            return f"{status} {self.description}{due}\n"
 
 
 
@@ -33,8 +39,17 @@ class ToDoList:
     
     def add_task(self):
         description = input("Please enter task description:")
+
+        due_date_input = input("Enter due date (YYYY-MM-DD) or leave blank: ")
+        due_date = None
+        if due_date_input:
+            try:
+                due_date = datetime.strptime(due_date_input, "%Y-%m-%d").date()
+            except ValueError:
+                print("Invalid date format. Task will be added without a due date.")
+
         
-        new_task=Task(description=description)
+        new_task=Task(description=description, due_date=due_date)
         
         with Session(self.engine) as session:
             session.add(new_task)
@@ -44,7 +59,7 @@ class ToDoList:
 
     def view_tasks(self):
         with Session(self.engine) as session:
-            tasks = session.exec(select(Task)).all()
+            tasks = session.exec(select(Task).order_by(asc(Task.due_date))).all()
 
             if tasks:
                 for idx, task in enumerate(tasks, start=1):
