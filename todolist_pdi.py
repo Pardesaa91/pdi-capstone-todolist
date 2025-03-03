@@ -38,23 +38,36 @@ class ToDoList:
         self.engine = engine
     
     def add_task(self):
-        description = input("Please enter task description:")
+        while True:
+            description = input("Please enter task description:")
 
-        due_date_input = input("Enter due date (YYYY-MM-DD) or leave blank: ")
-        due_date = None
-        if due_date_input:
-            try:
-                due_date = datetime.strptime(due_date_input, "%Y-%m-%d").date()
-            except ValueError:
-                print("Invalid date format. Task will be added without a due date.")
+            due_date_input = input("Enter due date (YYYY-MM-DD) or leave blank: ")
+            due_date = None
+            if due_date_input:
+                try:
+                    due_date = datetime.strptime(due_date_input, "%Y-%m-%d").date()
+                except ValueError:
+                    print("Invalid date format. Task will be added without a due date.")
 
+            
+            new_task=Task(description=description, due_date=due_date)
+            
+            with Session(self.engine) as session:
+                session.add(new_task)
+                session.commit()
+                print("This task has been added to your list.\n")
+            
+            while True:
+                add_another = input("Would you like to add another task? (y/n): \n").strip().lower()
+                if add_another == 'y':
+                    break
+                elif add_another == 'n':
+                    return
+                else:
+                    print("Invalid Choice, please try again.\n")
         
-        new_task=Task(description=description, due_date=due_date)
-        
-        with Session(self.engine) as session:
-            session.add(new_task)
-            session.commit()
-            print("This task has been added to your list.\n")
+
+           
 
 
     def view_tasks(self):
@@ -69,49 +82,68 @@ class ToDoList:
 
     
     def complete_task(self):
-        with Session(self.engine) as session:
-            tasks = session.exec(select(Task)).all()
-            if not tasks:
-                print("There are no tasks to complete.\n")
-                return
+        while True:
+            with Session(self.engine) as session:
+                tasks = session.exec(select(Task)).all()
+                if not tasks:
+                    print("There are no tasks to complete.\n")
+                    return
 
-            for idx, task in enumerate(tasks, start=1):
-                print(f"{idx}. {task}")
+                for idx, task in enumerate(tasks, start=1):
+                    print(f"{idx}. {task}")
 
-            try:
-                index = int(input("Enter task number to complete: ")) - 1
-                if 0 <= index < len(tasks):
-                    task_to_update = tasks[index]
-                    task_to_update.mark_complete()
-                    session.add(task_to_update)
-                    session.commit()
-                    print("You have successfully completed this task!\n")
+                try:
+                    index = int(input("Enter task number to complete: ")) - 1
+                    if 0 <= index < len(tasks):
+                        task_to_update = tasks[index]
+                        task_to_update.mark_complete()
+                        session.add(task_to_update)
+                        session.commit()
+                        print("You have successfully completed this task!\n")
+                    else:
+                        print("Invalid task number.\n")
+                except ValueError:
+                    print("Please enter a valid number.\n")
+            while True:
+                complete_another = input("Would you like to complete any other tasks? (y/n): \n").strip().lower()
+                if complete_another == 'y':
+                    break
+                elif complete_another == 'n':
+                    return
                 else:
-                    print("Invalid task number.\n")
-            except ValueError:
-                print("Please enter a valid number.\n")
+                    print("Invalid Choice, please try again.\n")
+           
 
     def delete_task(self):
-        with Session(self.engine) as session:
-            tasks = session.exec(select(Task)).all()
-            if not tasks:
-                print("There are no tasks to delete.\n")
-                return
-            for idx, task in enumerate(tasks, start=1):
-                print(f"{idx}. {task}")
+        while True:
+            with Session(self.engine) as session:
+                tasks = session.exec(select(Task)).all()
+                if not tasks:
+                    print("There are no tasks to delete.\n")
+                    return
+                for idx, task in enumerate(tasks, start=1):
+                    print(f"{idx}. {task}")
 
-            try:
-                index = int(input("Enter task number to delete: ")) - 1
-                if 0 <= index < len(tasks):
-                    task_to_delete = tasks[index]
-                    session.delete(task_to_delete)
-                    session.commit()
-                    print(f"Deleted task: {task_to_delete.description}.\n")
+                try:
+                    index = int(input("Enter task number to delete: ")) - 1
+                    if 0 <= index < len(tasks):
+                        task_to_delete = tasks[index]
+                        session.delete(task_to_delete)
+                        session.commit()
+                        print(f"Deleted task: {task_to_delete.description}.\n")
+                    else:
+                        print("Invalid task number.\n")
+                except ValueError:
+                    print("Please enter a valid number.\n")
+            while True:
+                delete_another = input("Would you like to delete any other tasks? (y/n): \n").strip().lower()
+                if delete_another == 'y':
+                    break
+                elif delete_another == 'n':
+                    return
                 else:
-                    print("Invalid task number.\n")
-            except ValueError:
-                print("Please enter a valid number.\n")
-    
+                    print("Invalid Choice, please try again.\n")
+        
     def run(self):
         create_db_and_tables()
 
