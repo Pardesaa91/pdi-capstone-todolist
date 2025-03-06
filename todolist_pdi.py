@@ -1,12 +1,16 @@
 from sqlmodel import SQLModel, Field, Session, create_engine, select
 from datetime import date, datetime
 from sqlalchemy import asc
+from textual.app import App, ComposeResult
+from textual.containers import Container
+from textual.widgets import Button, Header, Footer, Static
+
 
 engine = create_engine("sqlite:///todolist.db")
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
-##Define the Class, "Task".
+##Define the Class, "Task". 
 
 
 
