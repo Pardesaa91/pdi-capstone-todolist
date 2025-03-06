@@ -97,13 +97,19 @@ class ToDoList:
                     print("There are no tasks to complete.\n")
                     return
 
+                active_tasks = [task for task in tasks if not task.completed]
+
+                if not active_tasks:
+                    print("All active tasks have been completed!\n")
+                    break
+
                 for idx, task in enumerate(tasks, start=1):
                     print(f"{idx}. {task}")
 
                 try:
                     index = int(input("Enter task number to complete: ")) - 1
-                    if 0 <= index < len(tasks):
-                        task_to_update = tasks[index]
+                    if 0 <= index < len(active_tasks):
+                        task_to_update = active_tasks[index]
                         task_to_update.mark_complete()
                         session.add(task_to_update)
                         session.commit()
