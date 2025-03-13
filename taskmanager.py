@@ -38,16 +38,16 @@ class TaskManager:
             return tasks
 
                 
-    def complete_task(self, task):
+    def complete_task(self, task_id):
         with Session(self.engine) as session:
-            task = session.get(task)
+            task = session.get(Task, task_id)
             if task:
                 task.completed = True
                 session.commit()
            
-    def delete_task(self, task):
+    def delete_task(self, task_id):
         with Session(self.engine) as session:
-            task = session.get(task)
+            task = session.get(Task, task_id)
             if task:
                 session.delete(task)
                 session.commit()
