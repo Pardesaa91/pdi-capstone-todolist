@@ -125,7 +125,7 @@ class ToDoApp(App):
             self.update_tasks()
 
     def update_tasks(self):
-        self.mount(Vertical(*self.create_task_buttons()), after=self.query(Vertical))
+        self.mount(Vertical(*self.create_task_buttons()))
 
 if __name__ == "__main__":
     ToDoApp().run()
