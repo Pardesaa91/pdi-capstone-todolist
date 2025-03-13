@@ -110,7 +110,7 @@ class ToDoApp(App):
         elif button_id.startswith("done_"):
             task_id = int(button_id.split("_")[1])
             self.task_manager.complete_task(task_id)
-            self.refresh()
+            self.update_tasks()
         elif button_id.startswith("task_"):
             pass  # Placeholder for editing tasks
 
@@ -122,9 +122,9 @@ class ToDoApp(App):
         
         if description:
             self.task_manager.add_task(description, due_date)
-            self.refresh()
+            self.update_tasks()
 
-    def refresh(self):
+    def update_tasks(self):
         self.mount(Vertical(*self.create_task_buttons()), after=self.query(Vertical))
 
 if __name__ == "__main__":
